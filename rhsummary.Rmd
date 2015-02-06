@@ -1,0 +1,19 @@
+---
+title: "Resumen RH"
+author: "Jesus Ramos"
+date: "February 5, 2015"
+output: html_document
+runtime: shiny
+---
+
+## Questions
+* Cuantas mujeres total?
+* Cuantos hombres total?
+* Cuantos hombres por empresa?
+* Cuantas mujeres por empresa?
+* Donde viven por empresa?
+* Cuales son los lugares desde donde el commute es mayor?
+* Cuales son los lugares desde donde el commute es menor?
+* Cuantas mujeres llegan entre 7-8, cuantas entre 8-9, cuantas entre 9-10, cuantas entre 10-11, y cuantas mas alla de las 12.
+* Igual para los hombres
+* Igual para cada empresa
