@@ -3,17 +3,73 @@ title: "Resumen RH"
 author: "Jesus Ramos"
 date: "February 5, 2015"
 output: html_document
-runtime: shiny
 ---
 
 ## Questions
-* Cuantas mujeres total?
-* Cuantos hombres total?
-* Cuantos hombres por empresa?
-* Cuantas mujeres por empresa?
-* Donde viven por empresa?
 * Cuales son los lugares desde donde el commute es mayor?
 * Cuales son los lugares desde donde el commute es menor?
 * Cuantas mujeres llegan entre 7-8, cuantas entre 8-9, cuantas entre 9-10, cuantas entre 10-11, y cuantas mas alla de las 12.
 * Igual para los hombres
 * Igual para cada empresa
+
+```{r echo=FALSE, setOptions, message=FALSE}
+suppressPackageStartupMessages(library(googleVis))
+library(googleVis)
+op <- options(gvis.plot.tag='chart')
+```
+
+## Mujeres y Hombres en la muestra
+```{r echo = FALSE, warning=FALSE, message=FALSE, results='asis'}
+# Dependencias
+library(tidyr)
+library(dplyr)
+
+# Cargar datos
+empdata <- read.csv("empdata2.csv", header = T)
+
+# Crear dataframe
+dfgenero <- data.frame(t(summarise(group_by(empdata, Sexo), total=n())), stringsAsFactors = F)
+dfgenerot <- data.frame(Poblacion="Población", 
+                        Hombres=as.numeric(dfgenero$X1[2]), 
+                        Mujeres=as.numeric(dfgenero$X2[2]))
+
+# Plot
+dfgenero.plot <- gvisColumnChart(dfgenerot, options = list(title = "Proporción de Género en BMV"))
+plot(dfgenero.plot)
+
+```
+> La diferencia de 108 entre hombres y mujeres representa un 16% de la muestra, que habla de una empresa preocupada en reducir la brecha de género, aunque un análisis más profundo es necesario para una evaluación completa.
+
+## Integrantes por empresa
+```{r echo = FALSE, warning=FALSE, message=FALSE, results='asis'}
+dfempresa <- data.frame(t(summarise(group_by(empdata, Empresa), total=n())), stringsAsFactors = F)
+dfempresat <- data.frame(Poblacion="Población", 
+                         Bursatec=as.numeric(dfempresa$X1[2]), 
+                         CMMV=as.numeric(dfempresa$X2[2]), 
+                         SIF=as.numeric(dfempresa$X3[2]))
+dfempresa.plot <- gvisColumnChart(dfempresat, options = list(title = "Proporción de colaboradores por empresa"))
+plot(dfempresa.plot)
+```
+> Aunque CMMV es la empresa con mayor número de colaboradores de la muestra, el hecho que los mismos estén distribuidos en casi todas las demas empresas del grupo hace que Bursatec sea la unidad con mayor concentración de empleados, al 30% de la muestra.
+
+## Integrantes por genero y empresa
+```{r echo = FALSE, warning=FALSE, message=FALSE, results='asis'}
+dfgeneroempresa <- data.frame(summarise(group_by(empdata, Empresa, Sexo), total=n()), stringsAsFactors = F)
+dfgeneroempresat <- data.frame(Empresa=c("Bursatec", "CMMV", "SIF"), 
+                         Empresa=c("Bursatec", "CMMV", "SIF"), 
+                         Hombres=as.numeric(dfgeneroempresa$total[c(1,3,5)]),
+                         Mujeres=as.numeric(dfgeneroempresa$total[c(2,4,6)]))
+dfgeneroempresa.plot <- gvisColumnChart(dfgeneroempresat, options = list(title = "Proporción de colaboradores por genero por empresa"))
+plot(dfgeneroempresa.plot)
+```
+> Aqui podemos ver que quien contribuye mayormente a la brecha de genero es Bursatec, pero esto presenta causas sistémicas inherentes al giro de negocio de la empresa: el mundo de la tecnología continúa siendo dominado por hombres, aún cuando recientemente las mujeres esten ganando terreno.
+
+## Donde viven por empresa?
+```{r echo = FALSE, warning=FALSE, message=FALSE, results='asis'}
+dfempdeleg <- data.frame(summarise(group_by(empdata, Empresa, Delegacion...Municipio), total=n()), stringsAsFactors = F)
+dfempdeleg <- dfempdeleg[order(dfempdeleg[,1], -dfempdeleg[,3], dfempdeleg[,2]), ]
+dfempdelegt <- dfempdeleg
+  
+#dfempdeleg.plot <- gvisColumnChart(dfempdelegt, options = list(title = "Delegaciones y municipios donde habitan nuestros colaboradores por empresa"))
+#plot(dfempdeleg.plot)
+```
