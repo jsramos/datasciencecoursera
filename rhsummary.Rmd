@@ -9,11 +9,13 @@ Los datos se estan comiendo al mundo. Cada sitio web que visitamos, cada app mó
 2. lograr eficiencias operativas
 3. soportar la toma de decisiones
 
-El área de BigDataAnalytics de BMV nace para esta misión, combinando 3 disciplinas que hasta hace poco no se relacionaban: el dominio de negocio para hacer las preguntas correctas, la estadística avanzada para describir el problema, las ciencias computacionales para prescribir soluciones y predecir resultados. Como muestra de nuestra labor, abajo presentamos un análisis descriptivo de una muestra de colaboradores del grupo tomada en Diciembre 2014.
+El área de BigDataAnalytics de BMV nace para esta misión, combinando 3 disciplinas que hasta hace poco no se relacionaban: el dominio de negocio para hacer las preguntas correctas, la estadística avanzada para describir el problema, las ciencias computacionales para prescribir soluciones y predecir resultados. Como muestra de nuestra labor, abajo presentamos un breve análisis descriptivo de una muestra de colaboradores del grupo tomada en Diciembre 2014.
 
 ```{r echo=FALSE, setOptions, message=FALSE}
 suppressPackageStartupMessages(library(googleVis))
-library(googleVis)
+suppressPackageStartupMessages(
+  library(googleVis)
+)
 op <- options(gvis.plot.tag='chart')
 ```
 
@@ -23,7 +25,6 @@ op <- options(gvis.plot.tag='chart')
 library(tidyr)
 library(dplyr)
 library(stringr)
-library(lmomco)
 library(rCharts)
 # Cargar datos
 empdata <- read.csv("empdata2.csv", header = T)
@@ -99,10 +100,10 @@ names(listempdeleg[[1]]) <- c("Empresa", "Deleg/Municipio", "Bursatec")
 names(listempdeleg[[2]]) <- c("Empresa", "Deleg/Municipio", "CMMV")
 names(listempdeleg[[3]]) <- c("Empresa", "Deleg/Municipio", "SIF")
 colors <- c("blue", "red", "orange")
-lapply(seq_along(listempdeleg), 
+invisible(lapply(seq_along(listempdeleg), 
        function(i) {
          plot(gvisColumnChart(head(listempdeleg[[i]][,2:3], 5), 
-         options = list(colors=paste("['",colors[i],"']",sep = ""), title = paste("Delegaciones y municipios donde habitan nuestros colaboradores de", names(listempdeleg[[i]][3])))))})
+         options = list(colors=paste("['",colors[i],"']",sep = ""), title = paste("Delegaciones y municipios donde habitan nuestros colaboradores de", names(listempdeleg[[i]][3])))))}))
 ```
 > Por parte de SIF, es interesante notar que la mayor densidad esta en México. Desconocemos si es el estado, el país, o la ciudad. Esto es una muestra de los problemas más comunes en la disciplina de Analytics: la limpieza de datos. Cualquier conjunto de datos que deseemos analizar raramente vendrá preparado para obtener ni el conocimiento más básico, y tendrá que pasar por este intenso proceso de limpieza, formato y consolidación.
 
@@ -111,14 +112,14 @@ lapply(seq_along(listempdeleg),
 empentryroll <- emproll[emproll$Tipo.Registro == "E",]
 empentryroll$horaEntrada <- as.POSIXct(as.character(empentryroll$Hora.Reg), format="%H:%M")
 empentryroll <- empentryroll[order(empentryroll[,9], empentryroll[,5]), ]
-meantimeperlocation <- summarise(group_by(empentryroll, Delegacion...Municipio), tiempo_promedio=mean(horaEntrada), personal=n())
-meantimeperlocation <- meantimeperlocation[order(meantimeperlocation$tiempo_promedio), ]
+meantimeperlocation <- summarise(group_by(empentryroll, Delegacion...Municipio), tiempopromedio=mean(horaEntrada), ingresos=n())
+meantimeperlocation$tiempopromedio <- substr(as.character(meantimeperlocation$tiempopromedio), 12, 19)
+meantimeperlocation <- meantimeperlocation[order(meantimeperlocation$tiempopromedio), ]
 meantimeperlocation$DelegMun <- as.factor(meantimeperlocation$Delegacion...Municipio)
 meantimeperlocation$Delegacion...Municipio <- NULL
-
-#plot <- nPlot(personal ~ tiempo_promedio, data = meantimeperlocation, type = 'scatterChart')
-#plot$xAxis(axisLabel = 'Hora entrada promedio')
-#plot$chart(tooltipContent = "#! function(key, x, y, e){return '<b>' + e.point.DelegMun + '</b>'} !#")
-#plot$show('inline', include_assets = TRUE)
-rPlot(personal ~ tiempo_promedio, data = meantimeperlocation, type = 'point', tooltip = "#!function(item){ return '<b>' + item.DelegMun + '</b>' }!#")  
+plot <- rPlot(ingresos ~ tiempopromedio, data = meantimeperlocation, type = "point", color = "DelegMun")
+              #tooltip = "#!function(item){ return item.DelegMun + ', hora llegada prom: ' + item.tiempopromedio + ', ingresos: ' + item.ingresos}!#")
+plot$guides(x = list(min="6:00", max="1:00", title = "Promedio de hora de entrada"), y = list(min=-1, max=1000,title="Registros de entrada"))
+plot$show("inline", include_assets = TRUE)
 ```
+> En este scatterplot podemos ver que con los compañeros de Pachuca se concentran las entradas más tardías, a las 12:11, pero esto es de esperarse, dado que no estan establecidos formalmente en DF y vienen a nuestras instalaciones solo por cuestiones particulares. Los compañeros más tempraneros vienen de Villas del Álamo, llegando a las 6:49. Entre las 8:17 y las 9:20 llega el grueso de los colaboradores, y posteriormente los registros de entrada no superan los 144, procedentes de Mineral de la Reforma. Esto nos indica que los casos donde el 'commute' es mayor no representan una gran población, y por tanto nuestra política de horarios es la adecuada.
