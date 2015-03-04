@@ -5,11 +5,14 @@ date: "February 5, 2015"
 output: html_document
 ---
 Los datos se estan comiendo al mundo. Cada sitio web que visitamos, cada app móvil que usamos, cada compra que hacemos en el súper abona a los mas de 2 exabytes (2 + 18 ceros, o mil millones de películas en HD) producidos en el mundo diariamente desde 2012. A este volumen enorme de datos se le llama 'BigData', y esta explosión esta en cada rincón de la actividad humana. BMV no es la excepción: cada año sumamos 1 terabyte (TB) de datos -o mil copias de la Encyclopaedia Britannica- a los 4 TB de nuestra historia. El reto ahora para el grupo es aprovechar estos datos para:
+
 1. crear nuevos productos
 2. lograr eficiencias operativas
 3. soportar la toma de decisiones
 
-El área de BigDataAnalytics de BMV nace para esta misión, combinando 3 disciplinas que hasta hace poco no se relacionaban: el dominio de negocio para hacer las preguntas correctas, la estadística avanzada para describir el problema, las ciencias computacionales para prescribir soluciones y predecir resultados. Como muestra de nuestra labor, abajo presentamos un breve análisis descriptivo de una muestra de colaboradores del grupo tomada en Diciembre 2014.
+El área de BigDataAnalytics de BMV nace para esta misión, combinando 3 disciplinas que hasta hace poco no se relacionaban: el dominio de negocio para hacer las preguntas correctas, la estadística avanzada para describir el problema, las ciencias computacionales para prescribir soluciones y predecir resultados. Como muestra de nuestra labor, abajo presentamos un breve análisis descriptivo de una muestra de colaboradores del grupo tomada en Diciembre 2014. 
+
+*Es importante mencionar que esta muestra cumple con los estándares de privacidad, y en ningun momento tuvimos acceso a datos confidenciales como nombres, RFCs, sueldos, domicilios, etc, y sólo tuvimos acceso a registros de entrada, delegacion o municipio de residencia, y género.*
 
 ```{r echo=FALSE, setOptions, message=FALSE}
 suppressPackageStartupMessages(library(googleVis))
